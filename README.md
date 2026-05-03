@@ -1,4 +1,4 @@
-# 🚀  My Kernel Builder 
+#  My Kernel Builder 
 
 ### Default Workflow Settings
 
