@@ -67,7 +67,7 @@ on:
         description: "Kernel tick rate (Hz)"
         required: false
         type: choice
-        default: "600"
+        default: "300"
         options:
           - "default"
           - "100"
