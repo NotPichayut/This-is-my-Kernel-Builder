@@ -42,7 +42,7 @@ on:
         description: "Build KSU variant?"
         required: true
         type: choice
-        default: "ksu"
+        default: "both"
         options:
           - "noksu"
           - "ksu"
