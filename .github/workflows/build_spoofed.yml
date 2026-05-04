@@ -523,7 +523,8 @@ jobs:
 
           echo "🎉 Official KernelSU"
 
-- name: "🔧 Setup SukiSU-Ultra (Stable)"
+         
+      - name: "🔧 Setup SukiSU-Ultra "
         if: matrix.variant == 'ksu' && github.event.inputs.ksuVariant == 'sukisu-ultra'
         working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
         run: |
@@ -554,12 +555,11 @@ jobs:
         working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
         run: |
           rm -rf ./KernelSU ./drivers/kernelsu
-          
           # Install rKSU
           curl -LSs "https://raw.githubus- name: "🔧 Setup SukiSU-Ultra (Stable)"
-        if: matrix.variant == 'ksu' && github.event.inputs.ksuVariant == 'sukisu-ultra'
-        working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
-        run: |
+         if: matrix.variant == 'ksu' && github.event.inputs.ksuVariant == 'sukisu-ultra'
+         working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
+         run: |
           rm -rf ./KernelSU ./drivers/kernelsu
           
           # Install SukiSU-Ultra
