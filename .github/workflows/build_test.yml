@@ -1,4 +1,4 @@
-name: "Build test"
+name: "test"
 
 env:
   OUT_DIR: "out"
