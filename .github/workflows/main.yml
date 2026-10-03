@@ -46,7 +46,7 @@ on:
         description: "Kernel tick rate (Hz)"
         required: false
         type: choice
-        default: "250"
+        default: "250Hz"
         options:
           - "default"
           - "100Hz"
