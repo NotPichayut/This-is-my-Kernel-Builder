@@ -625,7 +625,16 @@ jobs:
           if [ -n "$LOCAL_VERSION" ] && [[ "$LOCAL_VERSION" != -* ]]; then
             LOCAL_VERSION="-$LOCAL_VERSION"
           fi
-          ZIP_NAME="Anykernel3_${{ github.event.inputs.kernelBranch }}${LOCAL_VERSION}_${BUILD_TIME}.zip"
+
+          # Add Spoofed tag if a spoof version is set
+          SPOOF_TAG=""
+          if [ -n "${{ github.event.inputs.kernelSpoofVersion }}" ]; then
+            SPOOF_TAG="_Spoofed"
+          fi
+
+          ZIP_NAME="Anykernel3_${{ github.event.inputs.kernelBranch }}${LOCAL_VERSION}${SPOOF_TAG}_${BUILD_TIME}.zip"
+          cd AnyKernel3
+          ZIP_NAME="Anykernel3_${{ github.event.inputs.kernelBranch }}${SPOOF_TAG}_${BUILD_TIME}.zip"
           cd AnyKernel3
           zip -r9 "../$ZIP_NAME" * -x .git/*
           cd ..
