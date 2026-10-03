@@ -5,8 +5,8 @@ env:
   KERNEL_VERSION: "5.15"
   ANDROID_VERSION: "13"
   # Hidden options (removed from the dispatch form, edit values here)
-  KERNEL_SOURCE_URL: "https://github.com/NotPichayut/This-is-my-Kernel-Builder"
   KERNEL_BRANCH: "Mango"
+  LOCAL_VERSION: "-Mango"           # custom localversion
   SPOOF_VERSION: "6.6.98"         # used when "Enable kernel version spoof" is on
   BUILD_KSU: "both"                 # noksu | ksu | both (also edit the matrix below)
   TICK_RATE: "300Hz"                # default | 100Hz | 250Hz | 300Hz | 1000Hz
@@ -17,21 +17,16 @@ env:
 on:
   workflow_dispatch:
     inputs:
-      kernelDevice:
-        description: "Device (used for defconfig)"
+      kernelSourceURL:
+        description: "Kernel source URL"
         required: true
         type: string
-        default: "gki"
+        default: "https://github.com/NotPichayut/This-is-my-Kernel-Builder"
       enableSpoof:
         description: "Enable kernel version spoof?"
         required: false
         type: boolean
         default: false
-      localVersion:
-        description: "Custom localversion name (e.g., -mybuild)"
-        required: false
-        type: string
-        default: "-Mango"
 
 jobs:
   Build-Kernel:
@@ -43,9 +38,10 @@ jobs:
         #   both -> ["noksu", "ksu"] | ksu -> ["ksu"] | noksu -> ["noksu"]
         variant: ["noksu", "ksu"]
     env:
-      kernelDir: common_${{ github.event.inputs.kernelDevice }}
+      # Device is hidden: to change it, edit "gki" in the next line and in DEFCONFIG_NAME
+      kernelDir: common_gki
       kernelName: common
-      DEFCONFIG_NAME: ${{ github.event.inputs.kernelDevice }}_defconfig
+      DEFCONFIG_NAME: gki_defconfig
       WORK_DIR: ${{ github.workspace }}
 
     steps:
@@ -60,14 +56,14 @@ jobs:
         working-directory: ./${{ env.kernelDir }}
         run: |
           git clone --recursive --branch ${{ env.KERNEL_BRANCH }} \
-            ${{ env.KERNEL_SOURCE_URL }} ${{ env.kernelName }} --depth=1
+            ${{ github.event.inputs.kernelSourceURL }} ${{ env.kernelName }} --depth=1
 
       - name: "🧬 Safe Kernel Version Spoof"
         if: ${{ inputs.enableSpoof }}
         working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
         run: |
           SPOOF_VERSION="${{ env.SPOOF_VERSION }}"
-          LOCAL_VERSION="${{ github.event.inputs.localVersion }}"
+          LOCAL_VERSION="${{ env.LOCAL_VERSION }}"
           FULL_VERSION="${SPOOF_VERSION}${LOCAL_VERSION}"
 
           if [ -z "$SPOOF_VERSION" ]; then
@@ -257,8 +253,8 @@ jobs:
          sed -i '/^CONFIG_LTO_CLANG_FULL/d' "$CONFIG_FILE"
     
          # Set localversion
-         if [ -n "${{ github.event.inputs.localVersion }}" ]; then
-          echo "CONFIG_LOCALVERSION=\"${{ github.event.inputs.localVersion }}\"" >> "$CONFIG_FILE"
+         if [ -n "${{ env.LOCAL_VERSION }}" ]; then
+          echo "CONFIG_LOCALVERSION=\"${{ env.LOCAL_VERSION }}\"" >> "$CONFIG_FILE"
          fi
     
          # LTO Configuration - Enable Thin LTO only
@@ -613,7 +609,7 @@ jobs:
          • Optimization: \`-${{ env.OPTIMIZATION_LEVEL }}\`
          • Tick Rate: \`${{ env.TICK_RATE }}\`
          • Build Type: \`${{ env.BUILD_KSU }}\`${KSU_TEXT}
-         • Local Version: \`${{ github.event.inputs.localVersion }}\`
+         • Local Version: \`${{ env.LOCAL_VERSION }}\`
          • Spoof Version: \`${{ inputs.enableSpoof && env.SPOOF_VERSION || 'Off' }}\`
          • Build Tools: \`${{ env.BUILD_TOOLCHAINS }}\`
          • Manager: \`ReSukiSU,SukiSU Ultra\`
@@ -640,7 +636,7 @@ jobs:
          • Optimization: \`-${{ env.OPTIMIZATION_LEVEL }}\`
          • Tick Rate: \`${{ env.TICK_RATE }}\`
          • Build Type: \`${{ env.BUILD_KSU }}\`${KSU_TEXT}
-         • Local Version: \`${{ github.event.inputs.localVersion }}\`
+         • Local Version: \`${{ env.LOCAL_VERSION }}\`
          • Spoof Version: \`${{ inputs.enableSpoof && env.SPOOF_VERSION || 'Off' }}\`
          • Build Tools: \`${{ env.BUILD_TOOLCHAINS }}\`
          • Manager: \`ReSukiSU,SukiSU Ultra\`
