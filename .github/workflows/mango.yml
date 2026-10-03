@@ -632,8 +632,6 @@ jobs:
             SPOOF_TAG="_Spoofed"
           fi
 
-          ZIP_NAME="Anykernel3_${{ github.event.inputs.kernelBranch }}${LOCAL_VERSION}${SPOOF_TAG}_${BUILD_TIME}.zip"
-          cd AnyKernel3
           ZIP_NAME="Anykernel3_${{ github.event.inputs.kernelBranch }}${SPOOF_TAG}_${BUILD_TIME}.zip"
           cd AnyKernel3
           zip -r9 "../$ZIP_NAME" * -x .git/*
